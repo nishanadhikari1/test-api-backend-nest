@@ -31,6 +31,28 @@
 $ npm install
 ```
 
+## Docker
+
+The Docker setup starts the API and PostgreSQL. It applies the current Prisma
+schema with `prisma db push` once the database is healthy.
+
+```bash
+# Only for a new checkout without an existing .env file:
+cp .env.example .env
+docker compose up --build
+```
+
+The API is available at `http://localhost:3000`; PostgreSQL is exposed on
+`localhost:5434` by default. Change the values in `.env` before sharing or
+deploying the stack. If you already have an `.env`, add the `POSTGRES_*` and
+`API_PORT` values from `.env.example` instead of replacing it. An existing
+PostgreSQL volume keeps its original database credentials, so retain those
+values when reconnecting to it.
+
+For production, commit Prisma migrations and replace the `migrate` service's
+`prisma db push` command with `prisma migrate deploy`. `db push` is intended
+for local development and prototype environments.
+
 ## Compile and run the project
 
 ```bash

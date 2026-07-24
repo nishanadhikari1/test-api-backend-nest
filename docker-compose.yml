@@ -1,11 +1,12 @@
 services:
-  db:
-    image: postgres:16
-    restart: always
+  postgres:
+    image: postgres:16-alpine
+    container_name: nest_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: nishan
-      POSTGRES_PASSWORD: mystic
-      POSTGRES_DB: blog_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5434:5432"
     volumes:
@@ -13,15 +14,16 @@ services:
 
   api:
     build: .
+    container_name: nest_api
+    restart: unless-stopped
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgresql://nishan:mystic@db:5432/blog_db
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
     depends_on:
-      - db
-    volumes:
-      - .:/app
-      - /app/node_modules
+      - postgres
 
 volumes:
   postgres_data:

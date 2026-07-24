@@ -11,3 +11,59 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+enum HttpMethod {
+  GET 
+  POST 
+  PUT 
+  PATCH 
+  DELETE
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String @unique
+  name String?
+  createdAt DateTime @default(now())
+  collections  Collection[]
+  // cookieJar    CookieJar[]
+
+}
+
+model Collection {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requests  Request[]
+  @@index([userId])
+}
+
+model Request {
+  id          String     @id @default(cuid())
+  name        String
+  method      HttpMethod @default(GET)
+  url         String
+  headers     Json?
+  body        Json?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  runs        RunLog[]
+  @@index([collectionId])
+}
+
+
+model RunLog {
+  id             String   @id @default(cuid())
+  statusCode     Int?
+  responseHeaders Json?
+  responseTimeMs Int?
+  responseBody   Json?
+  createdAt      DateTime @default(now())
+  requestId      String
+  request        Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  @@index([requestId])
+}
