@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: nishan
+      POSTGRES_PASSWORD: mystic
+      POSTGRES_DB: blog_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://nishan:mystic@db:5432/blog_db
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
