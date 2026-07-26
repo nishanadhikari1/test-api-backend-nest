@@ -6,9 +6,13 @@ import { RequestsModule } from './requests/requests.module';
 import { CollectionsModule } from './collections/collections.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
-  imports: [AuthModule, CollectionsModule, RequestsModule, RunLogsModule, PrismaModule],
+  imports: [AuthModule, CollectionsModule, RequestsModule, RunLogsModule, PrismaModule, ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath: '.env'
+  })],
   controllers: [AppController],
   providers: [AppService],
 })
