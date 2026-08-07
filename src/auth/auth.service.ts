@@ -1,9 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RegisterDto } from '../dto/register.dto';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { RegisterDto } from './dto/register.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
-import { LoginDto } from '../dto/login.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +22,7 @@ export class AuthService {
       where: { email: input.email },
     });
     if (existing) {
-      throw new Error('An account with this email already exists.');
+      throw new ConflictException('An account with this email already exists.');
     }
 
     const passwordHash = await bcrypt.hash(input.password, 10);
